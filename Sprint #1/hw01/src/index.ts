@@ -1,1 +1,1 @@
-console.log('init test');
+console.log('init test!');
