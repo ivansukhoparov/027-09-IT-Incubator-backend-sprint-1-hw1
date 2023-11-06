@@ -5,15 +5,12 @@
 .stylelintrc.json
 .eslintrc.js
 *.lock
-webpack.config.js
 *.ai
 *.log
 *.pdf
 *.psd
 *.sublime*
 dist/
-build/
 node_modules/
-tasks/
 npm-debug.*
 Thumbs.db
