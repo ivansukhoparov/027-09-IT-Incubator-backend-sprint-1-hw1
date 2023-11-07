@@ -1,11 +1,11 @@
-type videoType ={
+type VideoType ={
     id: number
     title:	string
     author:	string
     canBeDownloaded:	boolean
     //By default - false
 
-    minAgeRestriction:	number
+    minAgeRestriction:	number |null
     /*maximum: 18
     minimum: 1
     default: null
@@ -16,7 +16,7 @@ type videoType ={
     publicationDate:	string //($date-time)
     //By default - +1 day from CreatedAt
 
-    availableResolutions: number[]
+    availableResolutions: string[]
 /*  nullable: true
     h01.Resolutionsstring
     Enum:
