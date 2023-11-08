@@ -29,6 +29,8 @@ type VideoType ={
         ]
         */
 }
+type RequestWithParams<P> = Request<P,{},{},{}>
+
 
 const videos: VideoType[] = [
     {
@@ -45,15 +47,26 @@ const videos: VideoType[] = [
     }
 ];
 
-app.delete("/testing/all-data", (req:Request,res:Response):void=>{
-    res.send(204);
-})
 app.get("/videos", (req:Request,res:Response):void=>{
     res.send(videos);
 })
-app.get("/videos/:id", (req:Request,res:Response):void=>{
-    res.send("videos by id");
+
+app.get("/videos/:id", (req:RequestWithParams<{ id: string }> ,res:Response):void=>{
+    const id: number = +req.params.id;
+    const video:VideoType|undefined = videos.find((el)=> el.id === id);
+    if (!video) {
+        res.sendStatus(404)
+    }else{
+        res.send(video)
+    }
 })
+
+
+/*
+app.delete("/testing/all-data", (req:Request,res:Response):void=>{
+    res.send(204);
+})
+
 app.post("/videos", (req:Request,res:Response):void=>{
     res.send(200);
 })
@@ -63,3 +76,4 @@ app.put("/videos/:id", (req:Request,res:Response):void=>{
 app.delete("/videos/:id", (req:Request,res:Response):void=>{
     res.send(204);
 })
+*/
