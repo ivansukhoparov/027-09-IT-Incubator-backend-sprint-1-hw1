@@ -1,7 +1,7 @@
 import express, {Request,Response} from "express";
 export const app = express();
 
-const AvailableResolutions: string[] = [ "P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160" ];
+
 app.use(express.json());
 
 type VideoType ={
@@ -41,7 +41,9 @@ type ErrorsMessageType = {
     field:string
     message:string
 }
-const videos: VideoType[] = [
+
+const AvailableResolutions: string[] = [ "P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160" ];
+let videos: VideoType[] = [
     {
           id : 0,
           title :   "string"  ,
@@ -55,7 +57,6 @@ const videos: VideoType[] = [
           ]
     }
 ];
-
 
 app.get("/videos", (req:Request, res:Response):void=>{
     res.send(videos);
@@ -197,4 +198,9 @@ app.delete("/videos/:id", (req:RequestWithParams<Params>,res:Response):void=>{
     }
     videos.splice(videoIndex,1)
     res.sendStatus(204)
+})
+
+app.delete("/testing/all-data", (req:Request, res:Response):void=>{
+    videos = [];
+    res.sendStatus(204);
 })
