@@ -12,11 +12,6 @@ type VideoType ={
     //By default - false
 
     minAgeRestriction:	number |null
-    /*maximum: 18
-    minimum: 1
-    default: null
-    nullable: true
-    null - no restriction*/
 
     createdAt: 	string //($date-time)
     publicationDate:	string //($date-time)
@@ -32,13 +27,22 @@ type VideoType ={
 }
 type RequestWithParams<P> = Request<P,{},{},{}>
 type RequestWithBody<B> = Request<{},{},B,{}>
+type RequestWithBodyAndParams<P,B> =Request<P, {}, B, {}>
 type Params ={
     id: string
 }
-type Body = {
+type CreateVideoDto = {
     title: string
     author: string
     availableResolutions: typeof AvailableResolutions
+}
+type UpdateVideoDto = {
+    title: string
+    author: string
+    availableResolutions: typeof AvailableResolutions
+    canBeDownloaded: boolean
+    minAgeRestriction: number
+    publicationDate: string
 }
 type ErrorType = {
     errorsMessages:ErrorsMessageType[]
@@ -77,7 +81,7 @@ app.get("/videos/:id", (req:RequestWithParams<Params> ,res:Response):void=>{
     }
 })
 
-app.post("/videos", (req:RequestWithBody<Body>,res:Response):void=>{
+app.post("/videos", (req:RequestWithBody<CreateVideoDto>,res:Response):void=>{
     let errors:ErrorType = {
         errorsMessages:[]
     }
@@ -125,17 +129,57 @@ app.post("/videos", (req:RequestWithBody<Body>,res:Response):void=>{
     res.status(201).send(newVideo);
 })
 
+app.put("/vodeos/:id", (req: RequestWithBodyAndParams<Params, UpdateVideoDto>, res:Response)=> {
+    const id: number = +req.params.id;
 
-/*
-app.delete("/testing/all-data", (req:Request,res:Response):void=>{
-    res.send(204);
-})
+    let errors: ErrorType = {
+        errorsMessages: []
+    }
 
+    let {title, author,availableResolutions,canBeDownloaded, minAgeRestriction} = req.body;
 
-app.put("/videos/:id", (req:Request,res:Response):void=>{
-    res.send(200);
+    if (!title || title.trim().length<1 || title.trim().length>40) {
+        errors.errorsMessages.push({message:"Invalid title", field:"title"});
+    }
+    if (!author || author.trim().length<1 || author.trim().length>40) {
+        errors.errorsMessages.push({message:"Invalid title", field:"title"});
+    }
+    if (Array.isArray(availableResolutions)){
+        availableResolutions.map((r)=>{
+            !AvailableResolutions.includes(r) && errors.errorsMessages.push({message:"Invalid availableResolutions", field:"availableResolutions"});
+        })
+    }else{
+        availableResolutions=[];
+    }
+    if (!canBeDownloaded){
+        canBeDownloaded=false;
+    }
+    if (isNaN(minAgeRestriction)) {
+        errors.errorsMessages.push({message:"Invalid minAgeRestriction, expected number", field:"minAgeRestriction"});
+    }else {
+        if (+minAgeRestriction<1 || +minAgeRestriction>18) {
+            errors.errorsMessages.push({
+                message: "Invalid minAgeRestriction, must be from 1 to 18 ",
+                field: "minAgeRestriction"
+            });
+        }
+    }
+
+    const video: VideoType|undefined = videos.find((v, i)=>{
+        if (v.id === id) {
+            v.title = title;
+                v.author =author;
+                v.canBeDownloaded = canBeDownloaded;
+                v.minAgeRestriction = minAgeRestriction;
+                v.publicationDate = (new Date).toISOString();
+                v.availableResolutions= availableResolutions;
+        }
+    })
+    if (errors.errorsMessages.length>0){
+        res.status(400).send(errors)
+    }else if(!video) {
+        res.sendStatus(404)
+    }else{
+        res.status(200).send(videos)
+    }
 })
-app.delete("/videos/:id", (req:Request,res:Response):void=>{
-    res.send(204);
-})
-*/
