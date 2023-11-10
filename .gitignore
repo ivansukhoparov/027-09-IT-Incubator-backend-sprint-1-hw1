@@ -10,7 +10,7 @@
 *.pdf
 *.psd
 *.sublime*
-dist/
+dist
 node_modules/
 npm-debug.*
 Thumbs.db
