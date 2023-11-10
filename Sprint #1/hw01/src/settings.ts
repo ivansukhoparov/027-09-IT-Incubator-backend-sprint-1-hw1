@@ -68,7 +68,7 @@ app.get("/videos/:id", (req:RequestWithParams<Params> ,res:Response):void=>{
     if (!video) {
         res.sendStatus(404)
     }else{
-        res.send(video)
+        res.status(200).send(video)
     }
 })
 
