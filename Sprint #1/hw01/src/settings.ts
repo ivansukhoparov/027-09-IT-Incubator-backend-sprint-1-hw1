@@ -134,30 +134,35 @@ app.put("/videos/:id", (req: RequestWithBodyAndParams<Params, UpdateVideoDto>, r
         }
 
         if (!author || author.trim().length<1 || author.trim().length>40) {
-            errors.errorsMessages.push({message:"Invalid title", field:"title"});
+            errors.errorsMessages.push({message:"Invalid author", field:"author"});
         }
 
         if (Array.isArray(availableResolutions)){
             availableResolutions.map((r)=>{
-                !AvailableResolutions.includes(r) && errors.errorsMessages.push({message:"Invalid availableResolutions", field:"availableResolutions"});
+                if (!AvailableResolutions.includes(r)) {
+                    errors.errorsMessages.push({message:"Invalid availableResolutions", field:"availableResolutions"})
+                }
             })
-        }else{
-            availableResolutions=[];
+        }else if(!Array.isArray(availableResolutions)){
+                errors.errorsMessages.push({message:"Invalid availableResolutions", field:"availableResolutions"})
         }
 
-        if (typeof canBeDownloaded==="undefined"){
-            canBeDownloaded=false;
+        if (typeof canBeDownloaded!== "boolean"){
+            errors.errorsMessages.push({message:"Invalid canBeDownloaded", field:"canBeDownloaded"})
         }
 
-        if (typeof minAgeRestriction!== "undefined" && typeof minAgeRestriction === "number") {
+        if (typeof minAgeRestriction === "number") {
             if (minAgeRestriction<1 || minAgeRestriction>18) {
                 errors.errorsMessages.push({
                     message: "Invalid minAgeRestriction",
                     field: "minAgeRestriction"
                 });
             }
-        }else {
-            minAgeRestriction=null;
+        }else if( minAgeRestriction !== null && typeof minAgeRestriction !== "number"){
+            errors.errorsMessages.push({
+                message: "Invalid minAgeRestriction",
+                field: "minAgeRestriction"
+            });
         }
 
     const videoIndex = videos.findIndex((v) => v.id === id);
