@@ -190,7 +190,7 @@ app.put("/videos/:id", (req: RequestWithBodyAndParams<Params, UpdateVideoDto>, r
                 availableResolutions: availableResolutions
         }
         videos.splice(videoIndex,1,updateItem)
-        res.sendStatus(200)
+        res.sendStatus(204)
         }
 })
 
