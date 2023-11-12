@@ -122,76 +122,82 @@ app.post("/videos", (req:RequestWithBody<CreateVideoDto>,res:Response):void=>{
 
 app.put("/videos/:id", (req: RequestWithBodyAndParams<Params, UpdateVideoDto>, res:Response):void=> {
     const id: number = +req.params.id;
+    const videoIndex = videos.findIndex((v) => v.id === id);
+    const video  = videos.find((v) => v.id == id);
 
     let errors: ErrorType = {
             errorsMessages: []
         }
 
-        let {title, author,availableResolutions,canBeDownloaded, minAgeRestriction} = req.body;
+    let {title, author,availableResolutions,canBeDownloaded, minAgeRestriction,publicationDate} = req.body;
 
-        if (!title || title.trim().length<1 || title.trim().length>40) {
+
+
+    if (!title || title.trim().length<1 || title.trim().length>40) {
             errors.errorsMessages.push({message:"Invalid title", field:"title"});
         }
 
-        if (!author || author.trim().length<1 || author.trim().length>40) {
+    if (!author || author.trim().length<1 || author.trim().length>40) {
             errors.errorsMessages.push({message:"Invalid author", field:"author"});
         }
 
-        if (Array.isArray(availableResolutions)){
+    if (Array.isArray(availableResolutions)){
             availableResolutions.map((r)=>{
                 if (!AvailableResolutions.includes(r)) {
                     errors.errorsMessages.push({message:"Invalid availableResolutions", field:"availableResolutions"})
                 }
             })
-        }else if(!Array.isArray(availableResolutions)){
+    }else if(!Array.isArray(availableResolutions)){
                 errors.errorsMessages.push({message:"Invalid availableResolutions", field:"availableResolutions"})
-        }
+    }
 
-        if (typeof canBeDownloaded!== "boolean"){
+    if (typeof canBeDownloaded!== "boolean"){
             errors.errorsMessages.push({message:"Invalid canBeDownloaded", field:"canBeDownloaded"})
-        }
+    }
 
-        if (typeof minAgeRestriction === "number") {
+    if (typeof minAgeRestriction === "number") {
             if (minAgeRestriction<1 || minAgeRestriction>18) {
                 errors.errorsMessages.push({
                     message: "Invalid minAgeRestriction",
                     field: "minAgeRestriction"
                 });
             }
-        }else if( minAgeRestriction !== null && typeof minAgeRestriction !== "number"){
+    }else if( minAgeRestriction !== null && typeof minAgeRestriction !== "number"){
             errors.errorsMessages.push({
                 message: "Invalid minAgeRestriction",
                 field: "minAgeRestriction"
             });
-        }
+    }
 
-    const videoIndex = videos.findIndex((v) => v.id === id);
-    const video  = videos.find((v) => v.id == id);
+    if(!publicationDate && video){
+        publicationDate = video.publicationDate;
+    }
 
-        if (errors.errorsMessages.length>0){
+
+
+    if (errors.errorsMessages.length>0){
             res.status(400).send(errors);
             return
-        }
+    }
 
-        if(!video) {
+    if(!video) {
         res.sendStatus(404)
-        }
-        else{
+    }
+    else{
+       const updateItem: VideoType = {
+                    id: video.id,
+                    title: title,
+                    author: author,
+                    canBeDownloaded: canBeDownloaded,
+                    minAgeRestriction: minAgeRestriction,
+                    createdAt: video.createdAt,
+                    publicationDate: publicationDate,
+                    availableResolutions: availableResolutions
+        };
 
-        const publicationDate = new Date();
-        const updateItem: VideoType = {
-                id: video.id,
-                title: title,
-                author: author,
-                canBeDownloaded: canBeDownloaded,
-                minAgeRestriction: minAgeRestriction,
-                createdAt: video.createdAt,
-                publicationDate: publicationDate.toISOString(),
-                availableResolutions: availableResolutions
-        }
-        videos.splice(videoIndex,1,updateItem)
-        res.sendStatus(204)
-        }
+        videos.splice(videoIndex,1,updateItem);
+        res.sendStatus(204);
+    }
 })
 
 app.delete("/videos/:id", (req:RequestWithParams<Params>,res:Response):void=>{
