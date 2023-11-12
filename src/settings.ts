@@ -137,7 +137,7 @@ app.put("/videos/:id", (req: RequestWithBodyAndParams<Params, UpdateVideoDto>, r
             errors.errorsMessages.push({message:"Invalid title", field:"title"});
         }
 
-    if (!author || author.trim().length<1 || author.trim().length>40) {
+    if (!author || author.trim().length<1 || author.trim().length>20) {
             errors.errorsMessages.push({message:"Invalid author", field:"author"});
         }
 
