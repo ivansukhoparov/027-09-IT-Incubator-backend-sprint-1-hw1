@@ -53,7 +53,7 @@ describe(testName, ()=>{
     it("05 - POST should be create the video with correct data (only title and author)", async ()=>{
         const res = await request(app).post(testName).send({
             "title": "New Video 1",
-            "author": "Ivan",
+            "author": "Ivan"
         }).expect(201);
 
         testVideo1= res.body;
@@ -266,7 +266,8 @@ describe(testName, ()=>{
             "author": "Glasha",
             "availableResolutions": ["P720", "P1080", "P1440", "P2160"],
             "canBeDownloaded": true,
-            "minAgeRestriction": 18
+            "minAgeRestriction": 18,
+            "publicationDate": "2023-11-07T22:36:07.308Z"
         }).expect(204);
 
         const res =  await request(app).get(testName+testVideo1.id).expect(200); // received get request and write it to variable res
@@ -278,7 +279,7 @@ describe(testName, ()=>{
             "availableResolutions": ["P720", "P1080", "P1440", "P2160"],
             "canBeDownloaded": true,
             "minAgeRestriction": 18,
-            "publicationDate": res.body.publicationDate // change it to the date received with get request
+            "publicationDate": "2023-11-07T22:36:07.308Z" // change it to the date received with get request
         })
         // check that the data on the server has not been updated
     })
