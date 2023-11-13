@@ -132,7 +132,6 @@ app.put("/videos/:id", (req: RequestWithBodyAndParams<Params, UpdateVideoDto>, r
     let {title, author,availableResolutions,canBeDownloaded, minAgeRestriction,publicationDate} = req.body;
 
 
-
     if (!title || title.trim().length<1 || title.trim().length>40) {
             errors.errorsMessages.push({message:"Invalid title", field:"title"});
         }
@@ -179,11 +178,6 @@ app.put("/videos/:id", (req: RequestWithBodyAndParams<Params, UpdateVideoDto>, r
     if(!publicationDate && video){
         publicationDate = video.publicationDate;
     }
-
-
-
-
-
 
     if (errors.errorsMessages.length>0){
             res.status(400).send(errors);
