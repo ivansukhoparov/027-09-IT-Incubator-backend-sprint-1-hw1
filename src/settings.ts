@@ -169,9 +169,19 @@ app.put("/videos/:id", (req: RequestWithBodyAndParams<Params, UpdateVideoDto>, r
             });
     }
 
+    const dateTest = new RegExp("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}Z")
+    if (!dateTest.test(publicationDate)){
+        errors.errorsMessages.push({
+            message: "Invalid publicationDate",
+            field: "publicationDate"
+        });
+    }
     if(!publicationDate && video){
         publicationDate = video.publicationDate;
     }
+
+
+
 
 
 
